@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Pokémon Filmes</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+    <link rel="icon" type="image/png" href="/imagens/logo.png">
+   <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: Arial, Helvetica, sans-serif;
             background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
             color: #222;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-
         header {
             background: linear-gradient(135deg, #e3350d, #ff6b35);
             color: white;
@@ -27,34 +23,125 @@
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-
-        header h1 {
-            font-size: 42px;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 18px;
-            opacity: 0.9;
-        }
-
+        header h1 { font-size: 42px; margin-bottom: 10px; }
+        header p { font-size: 18px; opacity: 0.9; }
+        
         main {
             width: 90%;
             max-width: 1200px;
             margin: 40px auto;
+            flex: 1;
         }
 
+        .login-container {
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            max-width: 400px;
+            margin: 60px auto;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .login-container h2 { margin-bottom: 15px; color: #333; }
+        .login-container p { margin-bottom: 25px; color: #666; font-size: 15px; }
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .login-container input[type="password"]:focus { border-color: #1e88e5; outline: none; }
+        .btn-entrar {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-entrar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(21, 101, 192, 0.3);
+        }
+
+        #tela-home { display: none; }
+
+        .controles {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .pesquisa-container input {
+            padding: 12px 15px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .pesquisa-container input:focus { border-color: #e3350d; }
+
+        /* --- BOTÕES --- */
+        .botoes-acao button {
+            padding: 12px 24px;
+            margin-left: 12px;
+            border: none;
+            border-radius: 50px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            color: white;
+        }
+        .btn-add:hover {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+        }
+        .btn-logout {
+            background: #f1f3f4;
+            color: #5f6368;
+            box-shadow: none !important;
+        }
+        .btn-logout:hover {
+            background: #e8eaed;
+            color: #202124;
+            transform: translateY(-2px);
+        }
+
+        /* --- FILMES --- */
         .titulo {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
         }
-
-        .titulo h2 {
-            font-size: 28px;
-        }
-
+        .titulo h2 { font-size: 28px; color: #333; }
         .contador {
             background: #333;
             color: white;
@@ -73,297 +160,357 @@
             background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
-            transition: transform 0.25s, box-shadow 0.25s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
         }
-
         .card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
         }
-
-        /* IMAGEM DO FILME */
-
-        .card-topo {
-            height: 320px;
-            overflow: hidden;
-            background: #eee;
-        }
-
+        .card-topo { height: 320px; overflow: hidden; background: #eee; }
         .card-topo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.3s;
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform 0.4s;
         }
-
-        .card:hover .card-topo img {
-            transform: scale(1.05);
-        }
-
-        .card-conteudo {
-            padding: 22px;
-        }
-
-        .card h3 {
-            color: #333;
-            font-size: 20px;
-            line-height: 1.4;
-            margin-bottom: 18px;
-        }
-
+        .card:hover .card-topo img { transform: scale(1.05); }
+        .card-conteudo { padding: 22px; }
+        .card h3 { color: #222; font-size: 20px; line-height: 1.4; margin-bottom: 18px; }
+        
         .informacao {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 10px; padding: 9px 0; border-bottom: 1px solid #f0f0f0; font-size: 15px;
         }
-
-        .informacao:last-child {
-            border-bottom: none;
-        }
-
-        .label {
-            color: #777;
-        }
-
-        .valor {
-            font-weight: bold;
-            color: #333;
-            text-align: right;
-        }
-
+        .informacao:last-child { border-bottom: none; }
+        .label { color: #777; }
+        .valor { font-weight: bold; color: #444; text-align: right; }
         .id {
-            display: inline-block;
-            background: #333;
-            color: white;
-            padding: 4px 9px;
-            border-radius: 12px;
-            font-size: 12px;
+            display: inline-block; background: #444; color: white;
+            padding: 4px 9px; border-radius: 12px; font-size: 12px;
         }
 
-        .carregando {
-            text-align: center;
-            font-size: 18px;
-            color: #777;
-            padding: 50px;
-            grid-column: 1 / -1;
+        /* BOTÃO DE EXCLUIR NO CARD */
+        .btn-excluir {
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
+            background: transparent;
+            color: #d32f2f;
+            border: 2px solid #d32f2f;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn-excluir:hover { 
+            background: #d32f2f; 
+            color: white; 
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+            transform: translateY(-2px);
         }
 
-        .erro {
-            background: #ffe5e5;
-            color: #c62828;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            grid-column: 1 / -1;
+        .carregando { text-align: center; font-size: 18px; color: #777; padding: 50px; grid-column: 1 / -1; }
+        .erro { background: #ffe5e5; color: #c62828; padding: 20px; border-radius: 10px; text-align: center; grid-column: 1 / -1; }
+        
+        footer { text-align: center; padding: 30px; margin-top: auto; color: #777; }
+
+        /* --- MODAL ADICIONAR FILME --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+        .modal {
+            background: white; padding: 35px; border-radius: 15px; width: 90%; max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal h2 { margin-bottom: 25px; color: #333; font-size: 24px;}
+        .modal input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; transition: border-color 0.3s;}
+        .modal input:focus { border-color: #4CAF50; outline: none; }
+        .modal-botoes { display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px; }
+        
+        .btn-cancelar { 
+            padding: 12px 20px; background: #f1f3f4; color: #5f6368; border: none; 
+            border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease;
+        }
+        .btn-cancelar:hover { background: #e8eaed; color: #202124; }
+        
+        .btn-salvar { 
+            padding: 12px 20px; background: linear-gradient(135deg, #43a047, #2e7d32); color: white; border: none; 
+            border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-salvar:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
         }
 
-        footer {
-            text-align: center;
-            padding: 30px;
-            margin-top: 50px;
-            color: #777;
-        }
-
-        @media (max-width: 600px) {
-
-            header h1 {
-                font-size: 32px;
-            }
-
-            .titulo {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-
-            main {
-                width: 92%;
-            }
-
-            .card-topo {
-                height: 380px;
-            }
+        @media (max-width: 768px) {
+            .controles { flex-direction: column; align-items: stretch; }
+            .pesquisa-container input { width: 100%; }
+            .botoes-acao button { margin-left: 0; margin-top: 10px; width: 100%; border-radius: 8px; }
         }
     </style>
 </head>
-
 <body>
 
     <header>
-        <h1>⚡ Pokémon Filmes</h1>
+        <h1>Pokémon Filmes</h1>
         <p>Catálogo de filmes disponíveis na API</p>
     </header>
 
     <main>
-
-        <div class="titulo">
-
-            <h2>🎬 Filmes</h2>
-
-            <span class="contador" id="contador">
-                Carregando...
-            </span>
-
-        </div>
-
-        <div id="filmes">
-
-            <div class="carregando">
-                Carregando filmes...
+        <div id="tela-login" class="login-container">
+            <h2>Acesso Restrito</h2>
+            <p>Insira seu Token de Acesso para gerenciar o catálogo.</p>
+            <input type="password" id="input-token" placeholder="Digite seu Access Token">
+            
+            <div style="display: flex; align-items: center; margin-bottom: 20px; width: 100%; gap: 10px;">
+                <input type="checkbox" id="lembrar-senha" style="width: auto; margin: 0; cursor: pointer; transform: scale(1.2);">
+                <label for="lembrar-senha" style="color: #666; font-size: 15px; cursor: pointer;">Lembrar meu token</label>
             </div>
 
+            <button class="btn-entrar" onclick="fazerLogin()">Entrar no Sistema</button>
         </div>
 
+        <div id="tela-home">
+            <div class="controles">
+                <div class="pesquisa-container">
+                    <input type="text" id="input-pesquisa" placeholder="Pesquisar filme por título...">
+                </div>
+                <div class="botoes-acao">
+                    <button class="btn-add" onclick="abrirModal()">Adicionar Filme</button>
+                    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+                </div>
+            </div>
+
+            <div class="titulo">
+                <h2>Filmes</h2>
+                <span class="contador" id="contador">Carregando...</span>
+            </div>
+
+            <div id="filmes">
+                <div class="carregando">Carregando filmes...</div>
+            </div>
+        </div>
     </main>
 
     <footer>
         API de Filmes Pokémon • localhost:3000
     </footer>
 
+    <div class="modal-overlay" id="modal-adicionar">
+        <div class="modal">
+            <h2>Adicionar Novo Filme</h2>
+            <form id="form-filme">
+                <input type="text" id="add-titulo" placeholder="Título do Filme" required>
+                <input type="text" id="add-diretor" placeholder="Diretor" required>
+                <input type="number" id="add-ano" placeholder="Ano de Lançamento" required>
+                <input type="text" id="add-imagem" placeholder="Caminho da Imagem (ex: /imagens/novo.jpg)">
+                
+                <div class="modal-botoes">
+                    <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Salvar Filme</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
+        let todosOsFilmes = [];
 
-        fetch("/filmes")
+        // 1. VERIFICAR SESSÃO AO ABRIR
+        function verificarSessao() {
+            fetch('/api/perfil')
+                .then(res => {
+                    if (res.ok) {
+                        mostrarTelaHome();
+                        carregarFilmes();
+                    } else {
+                        mostrarTelaLogin();
+                    }
+                })
+                .catch(() => mostrarTelaLogin());
+        }
 
-            .then(response => {
+        // 2. MOSTRAR LOGIN E LER LOCALSTORAGE
+        function mostrarTelaLogin() {
+            document.getElementById('tela-home').style.display = 'none';
+            document.getElementById('tela-login').style.display = 'flex';
+            
+            const tokenSalvo = localStorage.getItem('pokemonToken');
+            if (tokenSalvo) {
+                document.getElementById('input-token').value = tokenSalvo;
+                document.getElementById('lembrar-senha').checked = true;
+            }
+        }
 
-                if (!response.ok) {
-                    throw new Error("Erro ao acessar a API");
+        function mostrarTelaHome() {
+            document.getElementById('tela-login').style.display = 'none';
+            document.getElementById('tela-home').style.display = 'block';
+        }
+
+        // 3. ENVIAR LOGIN PARA API
+        function fazerLogin() {
+            const token = document.getElementById('input-token').value;
+            if (!token) {
+                alert("Por favor, digite o Token de Acesso.");
+                return;
+            }
+
+            const lembrar = document.getElementById('lembrar-senha').checked;
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ access_token: token })
+            })
+            .then(res => {
+                if(res.ok) {
+                    if (lembrar) {
+                        localStorage.setItem('pokemonToken', token);
+                    } else {
+                        localStorage.removeItem('pokemonToken');
+                        document.getElementById('input-token').value = ""; 
+                    }
+                    
+                    mostrarTelaHome();
+                    carregarFilmes();
+                } else {
+                    alert("Token inválido! Tente novamente.");
                 }
-
-                return response.json();
-
             })
+            .catch(err => console.error("Erro no login", err));
+        }
 
-            .then(filmes => {
+        // 4. SAIR
+        function fazerLogout() {
+            fetch('/api/logout', { method: 'POST' })
+            .then(res => {
+                if(res.ok) {
+                    mostrarTelaLogin();
+                    document.getElementById('filmes').innerHTML = ''; 
+                }
+            })
+            .catch(err => console.error("Erro no logout", err));
+        }
 
-                const container =
-                    document.getElementById("filmes");
-
-                const contador =
-                    document.getElementById("contador");
-
-                container.innerHTML = "";
-
-                contador.textContent =
-                    `${filmes.length} filmes`;
-
-
-                filmes.forEach(filme => {
-
-                    const card =
-                        document.createElement("div");
-
-                    card.classList.add("card");
-
-
-                    card.innerHTML = `
-
-                        <div class="card-topo">
-
-                            <img
-                                src="${filme.imagem}"
-                                alt="${filme.titulo}"
-                            >
-
-                        </div>
-
-
-                        <div class="card-conteudo">
-
-                            <h3>
-                                ${filme.titulo}
-                            </h3>
-
-
-                            <div class="informacao">
-
-                                <span class="label">
-                                    ID
-                                </span>
-
-                                <span class="id">
-                                    #${filme.id}
-                                </span>
-
-                            </div>
-
-
-                            <div class="informacao">
-
-                                <span class="label">
-                                    Diretor
-                                </span>
-
-                                <span class="valor">
-                                    ${filme.diretor}
-                                </span>
-
-                            </div>
-
-
-                            <div class="informacao">
-
-                                <span class="label">
-                                    Ano
-                                </span>
-
-                                <span class="valor">
-                                    ${filme.ano}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-
-                    container.appendChild(card);
-
+        // 5. CARREGAR FILMES (GET)
+        function carregarFilmes() {
+            fetch("/filmes")
+                .then(response => {
+                    if (!response.ok) throw new Error("Erro ao acessar a API");
+                    return response.json();
+                })
+                .then(filmes => {
+                    todosOsFilmes = filmes; 
+                    renderizarFilmes(todosOsFilmes);
+                })
+                .catch(erro => {
+                    document.getElementById("filmes").innerHTML = `
+                        <div class="erro">Não foi possível carregar os filmes. Verifique se o servidor está rodando.</div>`;
+                    console.error(erro);
                 });
+        }
 
-            })
+        // 6. RENDERIZAR NA TELA
+        function renderizarFilmes(lista) {
+            const container = document.getElementById("filmes");
+            const contador = document.getElementById("contador");
+            container.innerHTML = "";
+            contador.textContent = `${lista.length} filmes`;
 
+            if(lista.length === 0) {
+                container.innerHTML = `<div class="carregando">Nenhum filme encontrado.</div>`;
+                return;
+            }
 
-            .catch(erro => {
-
-                const container =
-                    document.getElementById("filmes");
-
-
-                container.innerHTML = `
-
-                    <div class="erro">
-
-                        ❌ Não foi possível carregar os filmes.
-
-                        <br><br>
-
-                        Verifique se o servidor está rodando em:
-
-                        <br>
-
-                        <strong>
-                            http://localhost:3000
-                        </strong>
-
+            lista.forEach(filme => {
+                const card = document.createElement("div");
+                card.classList.add("card");
+                card.innerHTML = `
+                    <div class="card-topo">
+                        <img src="${filme.imagem || '/imagens/default.jpg'}" alt="${filme.titulo}">
                     </div>
-
+                    <div class="card-conteudo">
+                        <h3>${filme.titulo}</h3>
+                        <div class="informacao"><span class="label">ID</span><span class="id">#${filme.id}</span></div>
+                        <div class="informacao"><span class="label">Diretor</span><span class="valor">${filme.diretor}</span></div>
+                        <div class="informacao"><span class="label">Ano</span><span class="valor">${filme.ano}</span></div>
+                        
+                        <button class="btn-excluir" onclick="excluirFilme(${filme.id})">Excluir Filme</button>
+                    </div>
                 `;
-
-
-                console.error(erro);
-
+                container.appendChild(card);
             });
+        }
 
+        // 7. PESQUISAR
+        document.getElementById('input-pesquisa').addEventListener('input', (e) => {
+            const termo = e.target.value.toLowerCase();
+            const filmesFiltrados = todosOsFilmes.filter(filme => 
+                filme.titulo.toLowerCase().includes(termo)
+            );
+            renderizarFilmes(filmesFiltrados);
+        });
+
+        // 8. ADICIONAR FILME (POST)
+        document.getElementById('form-filme').addEventListener('submit', (e) => {
+            e.preventDefault(); 
+            
+            const novoFilme = {
+                titulo: document.getElementById('add-titulo').value,
+                diretor: document.getElementById('add-diretor').value,
+                ano: Number(document.getElementById('add-ano').value),
+                imagem: document.getElementById('add-imagem').value
+            };
+
+            fetch('/filmes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(novoFilme)
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    alert("Acesso Negado! Sua sessão pode ter expirado.");
+                    mostrarTelaLogin();
+                } else if (res.ok) {
+                    fecharModal();
+                    document.getElementById('form-filme').reset();
+                    carregarFilmes(); 
+                } else {
+                    alert("Erro ao adicionar o filme. Verifique os dados.");
+                }
+            })
+            .catch(err => console.error(err));
+        });
+
+        // 9. EXCLUIR FILME (DELETE)
+        function excluirFilme(id) {
+            const confirmar = confirm("Tem certeza que deseja excluir este filme?");
+            if (!confirmar) return;
+
+            fetch(`/filmes/${id}`, { method: 'DELETE' })
+            .then(res => {
+                if (res.status === 401) {
+                    alert("Acesso Negado! Sua sessão pode ter expirado.");
+                    mostrarTelaLogin();
+                } else if (res.ok || res.status === 204) {
+                    carregarFilmes(); 
+                } else {
+                    alert("Erro ao excluir o filme.");
+                }
+            })
+            .catch(err => console.error(err));
+        }
+
+        function abrirModal() { document.getElementById('modal-adicionar').style.display = 'flex'; }
+        function fecharModal() { document.getElementById('modal-adicionar').style.display = 'none'; }
+
+        verificarSessao();
     </script>
-
 </body>
 </html>
